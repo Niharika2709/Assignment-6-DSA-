@@ -1,0 +1,80 @@
+3. Write a program to find size of 
+i. Doubly Linked List. 
+ii. Circular Linked List. 
+
+
+i. 
+
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node *prev, *next;
+};
+
+
+int sizeDLL(Node *head) {
+    int count = 0;
+    Node *temp = head;
+
+    while (temp != NULL) {
+        count++;
+        temp = temp->next;
+    }
+
+    return count;
+}
+
+int main() {
+   
+    Node *n1 = new Node{10, NULL, NULL};
+    Node *n2 = new Node{20, n1, NULL};
+    Node *n3 = new Node{30, n2, NULL};
+    n1->next = n2;
+    n2->next = n3;
+
+    cout << "Size of Doubly Linked List = " << sizeDLL(n1);
+
+    return 0;
+}
+
+
+ii.
+
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node *next;
+};
+
+int sizeCLL(Node *head) {
+    if (head == NULL) return 0;
+
+    int count = 0;
+    Node *temp = head;
+
+    do {
+        count++;
+        temp = temp->next;
+    } while (temp != head);
+
+    return count;
+}
+
+int main() {
+    
+    Node *n1 = new Node{5, NULL};
+    Node *n2 = new Node{15, NULL};
+    Node *n3 = new Node{25, NULL};
+
+    n1->next = n2;
+    n2->next = n3;
+    n3->next = n1;  
+
+    cout << "Size of Circular Linked List = " << sizeCLL(n1);
+
+    return 0;
+}

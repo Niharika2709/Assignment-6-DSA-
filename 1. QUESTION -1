@@ -1,0 +1,330 @@
+1. Develop a menu driven program for the following operations of on a Circular as well 
+as a Doubly Linked List. 
+(a) Insertion anywhere in the linked list (As a first node, as a last node, and 
+after/before a specific node). 
+(b) Deletion of a specific node, say 'Delete Node 60'. That mean the node to be 
+deleted may appear as a head node, last node or a node in between. 
+(c) Search for a node.
+
+
+#include <iostream>
+using namespace std;
+
+struct DNode {
+    int data;
+    DNode *prev, *next;
+};
+
+struct CNode {
+    int data;
+    CNode *next;
+};
+
+
+DNode *dhead = NULL;
+
+
+void dInsertBegin(int val) {
+    DNode *temp = new DNode;
+    temp->data = val;
+    temp->prev = NULL;
+    temp->next = dhead;
+
+    if (dhead != NULL)
+        dhead->prev = temp;
+
+    dhead = temp;
+}
+
+
+void dInsertEnd(int val) {
+    DNode *temp = new DNode;
+    temp->data = val;
+    temp->next = NULL;
+
+    if (dhead == NULL) {
+        temp->prev = NULL;
+        dhead = temp;
+        return;
+    }
+
+    DNode *t = dhead;
+    while (t->next != NULL)
+        t = t->next;
+
+    t->next = temp;
+    temp->prev = t;
+}
+
+
+void dInsertAfter(int key, int val) {
+    DNode *t = dhead;
+    while (t != NULL && t->data != key)
+        t = t->next;
+
+    if (t == NULL) {
+        cout << "\nNode not found!";
+        return;
+    }
+
+    DNode *temp = new DNode;
+    temp->data = val;
+
+    temp->next = t->next;
+    temp->prev = t;
+    if (t->next != NULL)
+        t->next->prev = temp;
+
+    t->next = temp;
+}
+
+
+void dInsertBefore(int key, int val) {
+    if (dhead == NULL) return;
+
+    DNode *t = dhead;
+
+    while (t != NULL && t->data != key)
+        t = t->next;
+
+    if (t == NULL) {
+        cout << "\nNode not found!";
+        return;
+    }
+
+    if (t == dhead) {  
+        dInsertBegin(val);
+        return;
+    }
+
+    DNode *temp = new DNode;
+    temp->data = val;
+
+    temp->next = t;
+    temp->prev = t->prev;
+    t->prev->next = temp;
+    t->prev = temp;
+}
+
+void dDelete(int key) {
+    if (dhead == NULL) return;
+
+    DNode *t = dhead;
+
+    while (t != NULL && t->data != key)
+        t = t->next;
+
+    if (t == NULL) {
+        cout << "\nNode not found!";
+        return;
+    }
+
+    if (t->prev != NULL)
+        t->prev->next = t->next;
+    else
+        dhead = t->next;
+
+    if (t->next != NULL)
+        t->next->prev = t->prev;
+
+    delete t;
+}
+
+
+bool dSearch(int key) {
+    DNode *t = dhead;
+    while (t != NULL) {
+        if (t->data == key) return true;
+        t = t->next;
+    }
+    return false;
+}
+
+
+void dDisplay() {
+    DNode *t = dhead;
+    cout << "\nDoubly Linked List: ";
+    while (t != NULL) {
+        cout << t->data << " ";
+        t = t->next;
+    }
+}
+
+
+CNode *chead = NULL;
+
+void cInsertBegin(int val) {
+    CNode *temp = new CNode;
+    temp->data = val;
+
+    if (chead == NULL) {
+        temp->next = temp;
+        chead = temp;
+        return;
+    }
+
+    CNode *t = chead;
+    while (t->next != chead)
+        t = t->next;
+
+    t->next = temp;
+    temp->next = chead;
+    chead = temp;
+}
+
+
+void cInsertEnd(int val) {
+    CNode *temp = new CNode;
+    temp->data = val;
+
+    if (chead == NULL) {
+        temp->next = temp;
+        chead = temp;
+        return;
+    }
+
+    CNode *t = chead;
+    while (t->next != chead)
+        t = t->next;
+
+    t->next = temp;
+    temp->next = chead;
+}
+
+
+void cInsertAfter(int key, int val) {
+    if (chead == NULL) return;
+
+    CNode *t = chead;
+
+    do {
+        if (t->data == key) {
+            CNode *temp = new CNode;
+            temp->data = val;
+
+            temp->next = t->next;
+            t->next = temp;
+            return;
+        }
+        t = t->next;
+    } while (t != chead);
+
+    cout << "\nNode not found!";
+}
+
+
+void cDelete(int key) {
+    if (chead == NULL) return;
+
+    CNode *t = chead, *prev = NULL;
+
+    do {
+        if (t->data == key)
+            break;
+        prev = t;
+        t = t->next;
+    } while (t != chead);
+
+    if (t->data != key) {
+        cout << "\nNode not found!";
+        return;
+    }
+
+    if (t == chead && t->next == chead) {
+        delete t;
+        chead = NULL;
+        return;
+    }
+
+    if (t == chead)
+        chead = chead->next;
+
+    prev->next = t->next;
+    delete t;
+}
+
+
+bool cSearch(int key) {
+    if (chead == NULL) return false;
+
+    CNode *t = chead;
+    do {
+        if (t->data == key) return true;
+        t = t->next;
+    } while (t != chead);
+    return false;
+}
+
+
+void cDisplay() {
+    if (chead == NULL) {
+        cout << "\nCircular LL is empty!";
+        return;
+    }
+
+    cout << "\nCircular LL: ";
+    CNode *t = chead;
+    do {
+        cout << t->data << " ";
+        t = t->next;
+    } while (t != chead);
+}
+
+
+
+int main() {
+    int choice, listType, val, key;
+
+    while (true) {
+        cout << "\n\n1. Circular Linked List";
+        cout << "\n2. Doubly Linked List";
+        cout << "\n3. Exit";
+        cout << "\nEnter List Type: ";
+        cin >> listType;
+
+        if (listType == 3) break;
+
+        cout << "\n1. Insert at Beginning";
+        cout << "\n2. Insert at End";
+        cout << "\n3. Insert After a Node";
+        cout << "\n4. Insert Before a Node (DLL only)";
+        cout << "\n5. Delete a Node";
+        cout << "\n6. Search a Node";
+        cout << "\n7. Display";
+        cout << "\nEnter your choice: ";
+        cin >> choice;
+
+        switch (listType) {
+        case 1:
+            switch (choice) {
+                case 1: cout << "Value: "; cin >> val; cInsertBegin(val); break;
+                case 2: cout << "Value: "; cin >> val; cInsertEnd(val); break;
+                case 3: cout << "Insert after key: "; cin >> key; 
+                        cout << "Value: "; cin >> val; cInsertAfter(key, val); break;
+                case 5: cout << "Delete key: "; cin >> key; cDelete(key); break;
+                case 6: cout << "Search key: "; cin >> key;
+                        cout << (cSearch(key) ? "Found" : "Not Found"); break;
+                case 7: cDisplay(); break;
+            }
+            break;
+
+       
+        case 2:
+            switch (choice) {
+                case 1: cout << "Value: "; cin >> val; dInsertBegin(val); break;
+                case 2: cout << "Value: "; cin >> val; dInsertEnd(val); break;
+                case 3: cout << "Insert after key: "; cin >> key;
+                        cout << "Value: "; cin >> val; dInsertAfter(key, val); break;
+                case 4: cout << "Insert before key: "; cin >> key;
+                        cout << "Value: "; cin >> val; dInsertBefore(key, val); break;
+                case 5: cout << "Delete key: "; cin >> key; dDelete(key); break;
+                case 6: cout << "Search key: "; cin >> key;
+                        cout << (dSearch(key) ? "Found" : "Not Found"); break;
+                case 7: dDisplay(); break;
+            }
+            break;
+        }
+    }
+
+    return 0;
+}
